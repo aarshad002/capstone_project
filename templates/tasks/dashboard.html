@@ -1,0 +1,13 @@
+<h1>Dashboard</h1>
+
+<h2>My Tasks</h2>
+
+<ul>
+    {% for task in tasks %}
+        <li>
+            {{ task.title }} - {{ task.status }}
+        </li>
+    {% empty %}
+        <li>No tasks assigned.</li>
+    {% endfor %}
+</ul>
