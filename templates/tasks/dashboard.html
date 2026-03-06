@@ -1,13 +1,16 @@
 <h1>Dashboard</h1>
 
-<h2>My Tasks</h2>
+<p>
+  Pending: {{ pending_count }} |
+  In Progress: {{ in_progress_count }} |
+  Completed: {{ completed_count }}
+</p>
 
+<h2>My Tasks</h2>
 <ul>
-    {% for task in tasks %}
-        <li>
-            {{ task.title }} - {{ task.status }}
-        </li>
-    {% empty %}
-        <li>No tasks assigned.</li>
-    {% endfor %}
+  {% for task in tasks %}
+    <li>{{ task.title }} - {{ task.status }} - due: {{ task.due_date }}</li>
+  {% empty %}
+    <li>No tasks assigned.</li>
+  {% endfor %}
 </ul>
