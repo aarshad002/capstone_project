@@ -1,16 +1,74 @@
+{% extends "base.html" %}
+
+{% block content %}
 <h1>Dashboard</h1>
 
 <p>
-  Pending: {{ pending_count }} |
-  In Progress: {{ in_progress_count }} |
-  Completed: {{ completed_count }}
+    Pending: {{ pending_count }} |
+    In Progress: {{ in_progress_count }} |
+    Completed: {{ completed_count }}
 </p>
 
-<h2>My Tasks</h2>
-<ul>
-  {% for task in tasks %}
-    <li>{{ task.title }} - {{ task.status }} - due: {{ task.due_date }}</li>
-  {% empty %}
-    <li>No tasks assigned.</li>
-  {% endfor %}
-</ul>
+{% if user.role == "MANAGER" %}
+    <p>
+        <a href="{% url 'project_create' %}">Create New Project</a>
+    </p>
+
+    <p>
+        <a href="{% url 'task_create' %}">Create New Task</a>
+    </p>
+
+    <h2>Managed Projects</h2>
+    {% for project in managed_projects %}
+        <h3>{{ project.title }}</h3>
+        <ul>
+            {% for task in project.tasks.all %}
+                <li>
+                    <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
+                    - {{ task.status }} - due: {{ task.due_date }}
+                    - assignee: {{ task.assignee }}
+                    |
+                    <a href="{% url 'task_update' task.pk %}">Edit</a>
+                    |
+                    <a href="{% url 'task_delete' task.pk %}">Delete</a>
+                </li>
+            {% empty %}
+                <li>No tasks in this project.</li>
+            {% endfor %}
+        </ul>
+    {% empty %}
+        <p>You have not created any projects yet.</p>
+    {% endfor %}
+
+    <h2>My Tasks</h2>
+    <ul>
+        {% for task in my_tasks %}
+            <li>
+                <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
+                - {{ task.status }} - due: {{ task.due_date }}
+                |
+                <a href="{% url 'task_update' task.pk %}">Edit</a>
+                |
+                <a href="{% url 'task_delete' task.pk %}">Delete</a>
+            </li>
+        {% empty %}
+            <li>No tasks assigned to you.</li>
+        {% endfor %}
+    </ul>
+
+{% else %}
+    <h2>My Tasks</h2>
+    <ul>
+        {% for task in my_tasks %}
+            <li>
+                <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
+                - {{ task.status }} - due: {{ task.due_date }}
+                |
+                <a href="{% url 'task_update' task.pk %}">Update Status</a>
+            </li>
+        {% empty %}
+            <li>No tasks assigned.</li>
+        {% endfor %}
+    </ul>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>{{ task.title }}</h1>
+
+<p><strong>Description:</strong> {{ task.description }}</p>
+<p><strong>Status:</strong> {{ task.status }}</p>
+<p><strong>Priority:</strong> {{ task.priority }}</p>
+<p><strong>Project:</strong> {{ task.project.title }}</p>
+<p><strong>Assignee:</strong> {{ task.assignee }}</p>
+<p><strong>Due date:</strong> {{ task.due_date }}</p>
+
+<p>
+    {% if user.role == "MANAGER" %}
+        <a href="{% url 'task_update' task.pk %}">Edit</a> |
+        <a href="{% url 'task_delete' task.pk %}">Delete</a> |
+    {% else %}
+        <a href="{% url 'task_update' task.pk %}">Update Status</a> |
+    {% endif %}
+    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+</p>
+
+<hr>
+
+<h2>Comments</h2>
+
+<ul>
+    {% for comment in comments %}
+        <li>
+            <strong>{{ comment.author }}</strong> ({{ comment.timestamp }})<br>
+            {{ comment.text }}
+        </li>
+    {% empty %}
+        <li>No comments yet.</li>
+    {% endfor %}
+</ul>
+
+<hr>
+
+<h2>Add Comment</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Post Comment</button>
+</form>
+{% endblock %}
