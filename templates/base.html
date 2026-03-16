@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TaskFlow</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <nav>
-        {% if user.is_authenticated %}
-            <a href="{% url 'dashboard' %}">Dashboard</a> |
-            <a href="{% url 'project_list' %}">Projects</a> |
-            Logged in as {{ user.username }} |
+    <nav class="navbar">
+        <div class="nav-left">
+            {% if user.is_authenticated %}
+                <a href="{% url 'dashboard' %}">Dashboard</a>
+                <a href="{% url 'project_list' %}">Projects</a>
+            {% endif %}
+        </div>
 
-            <form action="{% url 'logout' %}" method="post" style="display:inline;">
-                {% csrf_token %}
-                <button type="submit">Logout</button>
-            </form>
-        {% else %}
-            <a href="{% url 'login' %}">Login</a>
-        {% endif %}
+        <div class="nav-right">
+            {% if user.is_authenticated %}
+                <span class="username">{{ user.username }} ({{ user.get_role_display }})</span>
+
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button class="logout-btn" type="submit">Logout</button>
+                </form>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </div>
     </nav>
+
+<hr>
 
     <hr>
 

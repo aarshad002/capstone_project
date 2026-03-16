@@ -4,8 +4,8 @@
 <h1>{{ task.title }}</h1>
 
 <p><strong>Description:</strong> {{ task.description }}</p>
-<p><strong>Status:</strong> {{ task.status }}</p>
-<p><strong>Priority:</strong> {{ task.priority }}</p>
+<p><strong>Status:</strong> {{ task.get_status_display }}</p>
+<p><strong>Priority:</strong> {{ task.get_priority_display }}</p>
 <p><strong>Project:</strong> {{ task.project.title }}</p>
 <p><strong>Assignee:</strong> {{ task.assignee }}</p>
 <p><strong>Due date:</strong> {{ task.due_date }}</p>
@@ -39,7 +39,7 @@
 
 <h2>Add Comment</h2>
 
-<form method="post">
+<form method="post" class="main-form">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Post Comment</button>
