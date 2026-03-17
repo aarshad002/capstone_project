@@ -107,17 +107,19 @@ cd TaskFlow
 
 ### 2. Create a virtual environment
 ```bash
-python -m venv venv
+conda create -n taskflow_env python=3.11
 ```
 
 ### 3. Activate the virtual environment
 ```bash
-conda 
+conda activate taskflow_env
 ```
+
 ### 4. Intall dependencies
 ```bash
 pip install -r requirements.txt
 ```
+
 ### 5. Apply migrations
 ```bash
 python manage.py makemigrations
@@ -128,6 +130,7 @@ python manage.py migrate
 ```bash
 python manage.py createsuperuser
 ```
+
 ### 7. Run the server
 ```bash
 python manage.py runserver
