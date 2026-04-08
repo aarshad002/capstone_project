@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Task Requests</h1>
+
+{% for request_item in task_requests %}
+    <div class="card">
+        <h3>{{ request_item.title }}</h3>
+        <p><strong>Project:</strong> {{ request_item.project.title }}</p>
+        <p><strong>Team:</strong> {{ request_item.project.team.name|default:"No Team" }}</p>
+        <p><strong>Requester:</strong> {{ request_item.requester }}</p>
+        <p><strong>Status:</strong> {{ request_item.get_status_display }}</p>
+        <p><strong>Description:</strong> {{ request_item.description }}</p>
+        
+        {% if request_item.status == "PENDING" %}
+            <a href="{% url 'task_request_review' request_item.pk %}">Review Request</a>
+
+        {% elif request_item.status == "APPROVED" and request_item.created_task %}
+            <p>
+                <strong>Converted to task:</strong>
+                <a href="{% url 'task_detail' request_item.created_task.pk %}">
+                    {{ request_item.created_task.title }}
+                </a>
+            </p>
+
+        {% elif request_item.status == "APPROVED" %}
+            <a href="{% url 'task_create' %}?project={{ request_item.project.pk }}&request={{ request_item.pk }}">
+                Create Task
+            </a>
+
+        {% elif request_item.status == "REJECTED" %}
+            <p><strong>Request Rejected</strong></p>
+        {% endif %}   
+    </div>
+{% empty %}
+    <p>No task requests found.</p>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Review Task Request</h1>
+
+<p><strong>Title:</strong> {{ object.title }}</p>
+<p><strong>Project:</strong> {{ object.project.title }}</p>
+<p><strong>Team:</strong> {{ object.project.team.name|default:"No Team" }}</p>
+<p><strong>Requester:</strong> {{ object.requester }}</p>
+<p><strong>Status:</strong> {{ object.get_status_display }}</p>
+<p><strong>Description:</strong> {{ object.description }}</p>
+
+{% if object.status == "APPROVED" and object.created_task %}
+    <p>
+        <strong>This request has already been converted into a task:</strong>
+        <a href="{% url 'task_detail' object.created_task.pk %}">
+            {{ object.created_task.title }}
+        </a>
+    </p>
+{% elif object.status == "REJECTED" %}
+    <p><strong>This request has been rejected.</strong></p>
+{% endif %}
+
+{% if object.status == "PENDING" %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Save Decision</button>
+    </form>
+{% elif object.status == "APPROVED" and not object.created_task %}
+    <p>
+        <a href="{% url 'task_create' %}?project={{ object.project.pk }}&request={{ object.pk }}">
+            Create Task from this approved request
+        </a>
+    </p>
+{% endif %}
+{% endblock %}

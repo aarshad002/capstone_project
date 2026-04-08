@@ -20,15 +20,38 @@
     <a href="{% url 'dashboard' %}">Back to Dashboard</a>
 </p>
 
+
+
 <hr>
 
-<h2>Comments</h2>
 
-<ul>
+
+<div class="comments-header">
+    <h2>Comments</h2>
+
+    <form method="get" class="sort-form">
+        <label for="sort-comments">Sort:</label>
+        <select name="sort" id="sort-comments" class="sort-select" onchange="this.form.submit()">
+            <option value="newest" {% if sort_order == "newest" %}selected{% endif %}>
+                Newest first
+            </option>
+            <option value="oldest" {% if sort_order == "oldest" %}selected{% endif %}>
+                Oldest first
+            </option>
+        </select>
+    </form>
+</div>
+
+<ul class="comment-list">
     {% for comment in comments %}
-        <li>
-            <strong>{{ comment.author }}</strong> ({{ comment.timestamp }})<br>
-            {{ comment.text }}
+        <li class="comment-item">
+            <div class="comment-meta">
+                <strong>{{ comment.author.username }}</strong>
+                • {{ comment.timestamp }}
+            </div>
+            <div>
+                {{ comment.text }}
+            </div>
         </li>
     {% empty %}
         <li>No comments yet.</li>
