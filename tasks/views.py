@@ -209,12 +209,11 @@ class TaskDeleteView(LoginRequiredMixin, DeleteView):
 def task_detail(request, pk):
     task = get_object_or_404(Task, pk=pk)
 
-    if request.user.role == request.user.Role.MANAGER:
-        if task.project.team.manager != request.user:
-            raise PermissionDenied
-    else:
-        if task.assignee != request.user:
-            raise PermissionDenied
+    is_team_manager = task.project.team.manager == request.user
+    is_assignee = task.assignee == request.user
+
+    if not (is_team_manager or is_assignee):
+        raise PermissionDenied
 
     sort_order = request.GET.get("sort", "newest")
 

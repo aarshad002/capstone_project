@@ -28,12 +28,15 @@
 <ul>
     {% for task in tasks %}
         <li>
-            <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
+            {% if is_team_manager or task.assignee == user %}
+                <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
+            {% else %}
+                {{ task.title }}
+            {% endif %}
             - {{ task.get_status_display }}
         </li>
     {% empty %}
         <li>No tasks in this project.</li>
     {% endfor %}
 </ul>
-
 {% endblock %}
