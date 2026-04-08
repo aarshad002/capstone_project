@@ -28,7 +28,7 @@
 <ul>
     {% for task in tasks %}
         <li>
-            {% if user.role == "MANAGER" or task.assignee == user %}
+            {% if is_team_manager or task.assignee == user %}
                 <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
             {% else %}
                 {{ task.title }}

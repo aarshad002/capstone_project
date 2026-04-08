@@ -11,7 +11,12 @@ from .forms import ProjectForm
 @login_required
 def project_list(request):
     if request.user.role == request.user.Role.MANAGER:
-        projects = Project.objects.filter(team__manager=request.user)
+        projects = Project.objects.filter(
+            team__manager=request.user
+        ) | Project.objects.filter(
+            team__members=request.user
+        )
+        projects = projects.distinct()
     else:
         projects = Project.objects.filter(team__members=request.user).distinct()
 
@@ -25,21 +30,23 @@ def project_list(request):
 def project_detail(request, project_id):
     project = get_object_or_404(Project, id=project_id)
 
-    if request.user.role == request.user.Role.MANAGER:
-        if project.team.manager != request.user:
-            raise PermissionDenied
-    else:
-        if not project.team.members.filter(pk=request.user.pk).exists():
-            raise PermissionDenied
+    is_team_manager = project.team.manager == request.user
+    is_team_member = project.team.members.filter(pk=request.user.pk).exists()
+
+    if not (is_team_manager or is_team_member):
+        raise PermissionDenied
 
     tasks = project.tasks.all()
 
     context = {
         "project": project,
-        "tasks": tasks
+        "tasks": tasks,
+        "is_team_manager": is_team_manager,
     }
 
     return render(request, "projects/project_detail.html", context)
+
+
 
 class ProjectCreateView(LoginRequiredMixin, CreateView):
     model = Project
