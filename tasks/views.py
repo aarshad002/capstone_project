@@ -33,14 +33,17 @@ def send_task_assignment_email(task):
         f"Please log in to TaskFlow to view the task details."
     )
 
-    send_mail(
-        subject,
-        message,
-        settings.DEFAULT_FROM_EMAIL,
-        [assignee.email],
-        fail_silently=False,
-    )
-
+    try:
+        send_mail(
+            subject,
+            message,
+            settings.DEFAULT_FROM_EMAIL,
+            [assignee.email],
+            fail_silently=False,
+        )
+    except Exception as e:
+        print("Email sending failed:", e)
+        
 @login_required
 def dashboard(request):
     my_tasks = Task.objects.filter(assignee=request.user).select_related("project__team").order_by("project__title", "due_date")
