@@ -3,14 +3,23 @@
 {% block content %}
 <h1>Delete Task</h1>
 
-<p>Are you sure you want to delete "{{ object.title }}"?</p>
+<div class="card">
+    <p class="delete-text">
+        Are you sure you want to delete "<strong>{{ object.title }}</strong>"?
+    </p>
 
-<form method="post" class="main-form">
-    {% csrf_token %}
-    <button type="submit">Yes, Delete</button>
-</form>
+    <form method="post" class="delete-form">
+        {% csrf_token %}
 
-<p>
-    <a href="{% url 'dashboard' %}">Cancel</a>
-</p>
+        <div class="delete-actions">
+            <button type="submit" class="btn btn-danger">
+                Yes, Delete Task
+            </button>
+
+            <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
 {% endblock %}

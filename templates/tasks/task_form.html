@@ -11,14 +11,16 @@
 
 <form method="post" class="main-form">
     {% csrf_token %}
+
     {% if task_request %}
         <input type="hidden" name="request" value="{{ task_request.id }}">
     {% endif %}
-    {{ form.as_p }}
-    <button type="submit">Save</button>
-</form>
 
-<p>
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
-</p>
+    {{ form.as_p }}
+
+    <div class="form-actions">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</form>
 {% endblock %}

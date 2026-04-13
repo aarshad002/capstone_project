@@ -38,13 +38,22 @@
             <ul class="task-list">
                 {% for task in project.tasks.all %}
                     <li class="task-item">
-                        <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
-                        <div class="meta">
-                            {{ task.get_status_display }} • due: {{ task.due_date }} • {{ task.assignee }}
+                        <div class="task-content">
+                            <a href="{% url 'task_detail' task.pk %}" class="task-title">
+                                {{ task.title }}
+                            </a>
+
+                            <div class="meta">
+                                {{ task.get_status_display }} • due: {{ task.due_date }} • {{ task.assignee.username|default:"Unassigned" }}
+                            </div>
                         </div>
-                        <div class="actions">
-                            <a href="{% url 'task_update' task.pk %}">Edit</a>
-                            <a href="{% url 'task_delete' task.pk %}">Delete</a>
+
+                        <div class="task-actions">
+                            <a href="{% url 'task_update' task.pk %}" class="task-btn edit-btn">Edit</a>
+
+                            {% if task.project.team.manager == user %}
+                                <a href="{% url 'task_delete' task.pk %}" class="task-btn delete-btn">Delete</a>
+                            {% endif %}
                         </div>
                     </li>
                 {% empty %}
@@ -61,17 +70,24 @@
         <ul class="task-list">
             {% for task in my_tasks %}
                 <li class="task-item">
-                    <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
+                    <div class="task-content">
+                        <a href="{% url 'task_detail' task.pk %}" class="task-title">
+                            {{ task.title }}
+                        </a>
 
-                    <div class="meta">
-                        {{ task.project.title }} ({{ task.project.team.name|default:"No Team" }})
-                        • {{ task.get_status_display }}
-                        • due: {{ task.due_date }}
+                        <div class="meta">
+                            {{ task.project.title }} ({{ task.project.team.name|default:"No Team" }})
+                            • {{ task.get_status_display }}
+                            • due: {{ task.due_date }}
+                        </div>
                     </div>
 
-                    <div class="actions">
-                        <a href="{% url 'task_update' task.pk %}">Edit</a>
-                        <a href="{% url 'task_delete' task.pk %}">Delete</a>
+                    <div class="task-actions">
+                        <a href="{% url 'task_update' task.pk %}" class="task-btn edit-btn">Edit</a>
+
+                        {% if task.project.team.manager == user %}
+                            <a href="{% url 'task_delete' task.pk %}" class="task-btn delete-btn">Delete</a>
+                        {% endif %}
                     </div>
                 </li>
             {% empty %}
@@ -82,33 +98,39 @@
     
 {% else %}
     <a class="action-link" href="{% url 'task_request_create' %}">Request New Task</a>
-    <h2>My Tasks</h2>
+    <h2 class="section-title">My Tasks</h2>
 
     {% for project, tasks in grouped_tasks.items %}
         <div class="card">
-            <h3>
+            <div class="card-title">
                 {{ project.title }}
-                <span style="font-size: 14px; color: #777;">
-                    • Team: {{ project.team.name|default:"No Team" }}
+                <span class="meta">
+                    • {{ project.team.name|default:"No Team" }}
                 </span>
-            </h3>
+            </div>
 
-            <ul>
+            <ul class="task-list">
                 {% for task in tasks %}
-                    <li>
-                        <a href="{% url 'task_detail' task.pk %}">{{ task.title }}</a>
-                        - {{ task.get_status_display }}
-                        - due: {{ task.due_date }}
-                        |
-                        <a href="{% url 'task_update' task.pk %}">Update Status</a>
+                    <li class="task-item">
+                        <div class="task-content">
+                            <a href="{% url 'task_detail' task.pk %}" class="task-title">
+                                {{ task.title }}
+                            </a>
+
+                            <div class="meta">
+                                {{ task.get_status_display }} • due: {{ task.due_date }}
+                            </div>
+                        </div>
+
+                        <div class="task-actions">
+                            <a href="{% url 'task_update' task.pk %}" class="task-btn edit-btn">
+                                Update
+                            </a>
+                        </div>
                     </li>
-                {% empty %}
-                    <li>No tasks in this project.</li>
                 {% endfor %}
             </ul>
         </div>
-    {% empty %}
-        <p>No tasks assigned.</p>
     {% endfor %}
 {% endif %}
 {% endblock %}
