@@ -1,44 +1,49 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>{{ task.title }}</h1>
+<div class="card">
+    <div class="card-header">
+        <h1 class="task-detail-title">{{ task.title }}</h1>
 
-<p><strong>Description:</strong> {{ task.description }}</p>
-<p><strong>Status:</strong> {{ task.get_status_display }}</p>
-<p><strong>Priority:</strong> {{ task.get_priority_display }}</p>
-<p><strong>Project:</strong> {{ task.project.title }}</p>
-<p><strong>Assignee:</strong> {{ task.assignee }}</p>
-<p><strong>Due date:</strong> {{ task.due_date }}</p>
+        <div class="task-detail-actions">
+            {% if user.role == "MANAGER" %}
+                <a href="{% url 'task_update' task.pk %}" class="task-btn edit-btn">Edit</a>
+                <a href="{% url 'task_delete' task.pk %}" class="task-btn delete-btn">Delete</a>
+            {% else %}
+                <a href="{% url 'task_update' task.pk %}" class="task-btn edit-btn">Update</a>
+            {% endif %}
+        </div>
+    </div>
 
-<p>
-    {% if user.role == "MANAGER" %}
-        <a href="{% url 'task_update' task.pk %}">Edit</a> |
-        <a href="{% url 'task_delete' task.pk %}">Delete</a> |
-    {% else %}
-        <a href="{% url 'task_update' task.pk %}">Update Status</a> |
-    {% endif %}
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
-</p>
+    <div class="task-detail-info">
+        <p><strong>Description:</strong> {{ task.description|default:"—" }}</p>
+        <p><strong>Status:</strong> 
+        <span class="status-badge status-large status-{{ task.status|lower }}">
+            {{ task.get_status_display }}
+        </span></p>
+        <p><strong>Priority:</strong> {{ task.get_priority_display }}</p>
+        <p><strong>Project:</strong> {{ task.project.title }}</p>
+        <p><strong>Assignee:</strong> {{ task.assignee.username|default:"Unassigned" }}</p>
+        <p><strong>Due date:</strong> {{ task.due_date }}</p>
+    </div>
 
-
+    <div class="task-back">
+        <a href="{% url 'dashboard' %}" class="secondaryback-btn">Back to Dashboard</a>
+    </div>
+</div>
 
 <hr>
-
-
 
 <div class="comments-header">
     <h2>Comments</h2>
 
     <form method="get" class="sort-form">
-        <label for="sort-comments">Sort:</label>
-        <select name="sort" id="sort-comments" class="sort-select" onchange="this.form.submit()">
-            <option value="newest" {% if sort_order == "newest" %}selected{% endif %}>
-                Newest first
-            </option>
-            <option value="oldest" {% if sort_order == "oldest" %}selected{% endif %}>
-                Oldest first
-            </option>
-        </select>
+        <div class="sort-group">
+            <select name="sort" id="sort-comments" class="sort-select" onchange="this.form.submit()">
+                <option value="newest" {% if sort_order == "newest" %}selected{% endif %}>Newest first</option>
+                <option value="oldest" {% if sort_order == "oldest" %}selected{% endif %}>Oldest first</option>
+            </select>
+        </div>
     </form>
 </div>
 
@@ -49,7 +54,7 @@
                 <strong>{{ comment.author.username }}</strong>
                 • {{ comment.timestamp }}
             </div>
-            <div>
+            <div class="comment-text">
                 {{ comment.text }}
             </div>
         </li>
@@ -62,9 +67,20 @@
 
 <h2>Add Comment</h2>
 
-<form method="post" class="main-form">
+<form method="post" class="main-form comment-form">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Post Comment</button>
+
+    <div class="comment-field">
+        {{ form.text }}
+        {% if form.text.errors %}
+            <div class="form-errors">
+                {{ form.text.errors }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="comment-form-actions">
+        <button type="submit">Post Comment</button>
+    </div>
 </form>
 {% endblock %}

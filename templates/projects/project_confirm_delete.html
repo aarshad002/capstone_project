@@ -3,15 +3,27 @@
 {% block content %}
 <h1>Delete Project</h1>
 
-<p>Are you sure you want to delete "{{ object.title }}"?</p>
-<p>This will also delete all tasks related to this project.</p>
+<div class="card">
+    <p class="delete-text">
+        Are you sure you want to delete "<strong>{{ object.title }}</strong>"?
+    </p>
 
-<form method="post" class="main-form">
-    {% csrf_token %}
-    <button type="submit">Yes, Delete Project</button>
-</form>
+    <p class="delete-warning">
+        This will also delete all tasks related to this project.
+    </p>
 
-<p>
-    <a href="{% url 'project_detail' object.pk %}">Cancel</a>
-</p>
+    <form method="post" class="delete-form">
+        {% csrf_token %}
+
+        <div class="delete-actions">
+            <button type="submit" class="btn btn-danger">
+                Yes, Delete Project
+            </button>
+
+            <a href="{% url 'project_detail' object.pk %}" class="btn btn-secondary">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
 {% endblock %}
